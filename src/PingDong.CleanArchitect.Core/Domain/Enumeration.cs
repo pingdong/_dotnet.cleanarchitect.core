@@ -28,10 +28,10 @@ namespace PingDong.CleanArchitect.Core
             var type = typeof(T);
             var fields = type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
 
-            foreach (var info in fields)
+            foreach (var field in fields)
             {
                 var instance = new T();
-                var locatedValue = info.GetValue(instance) as T;
+                var locatedValue = field.GetValue(instance) as T;
 
                 if (locatedValue != null)
                     yield return locatedValue;
@@ -53,8 +53,8 @@ namespace PingDong.CleanArchitect.Core
 
         public static bool operator ==(Enumeration left, Enumeration right)
         {
-            if (object.Equals(left, null))
-                return object.Equals(right, null) ? true : false;
+            if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
+                return false;
 
             return left.Equals(right);
         }

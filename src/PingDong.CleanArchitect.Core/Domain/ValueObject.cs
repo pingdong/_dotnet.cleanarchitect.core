@@ -5,18 +5,31 @@ namespace PingDong.CleanArchitect.Core
 {
     public abstract class ValueObject
     {
-        protected static bool EqualOperator(ValueObject left, ValueObject right)
+        //protected static bool EqualOperator(ValueObject left, ValueObject right)
+        //{
+        //    if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
+        //    {
+        //        return false;
+        //    }
+        //    return ReferenceEquals(left, null) || left.Equals(right);
+        //}
+
+        //protected static bool NotEqualOperator(ValueObject left, ValueObject right)
+        //{
+        //    return !(EqualOperator(left, right));
+        //}
+
+        public static bool operator ==(ValueObject left, ValueObject right)
         {
             if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
-            {
                 return false;
-            }
-            return ReferenceEquals(left, null) || left.Equals(right);
+
+            return left.Equals(right);
         }
 
-        protected static bool NotEqualOperator(ValueObject left, ValueObject right)
+        public static bool operator !=(ValueObject left, ValueObject right)
         {
-            return !(EqualOperator(left, right));
+            return !(left == right);
         }
 
         protected abstract IEnumerable<object> GetAtomicValues();
@@ -24,9 +37,7 @@ namespace PingDong.CleanArchitect.Core
         public override bool Equals(object obj)
         {
             if (obj == null || obj.GetType() != GetType())
-            {
                 return false;
-            }
 
             using (var thisValues = GetAtomicValues().GetEnumerator())
             using (var otherValues = ((ValueObject) obj).GetAtomicValues().GetEnumerator())
