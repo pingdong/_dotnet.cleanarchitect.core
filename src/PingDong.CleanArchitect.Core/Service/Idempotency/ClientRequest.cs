@@ -3,7 +3,7 @@ using PingDong.CleanArchitect.Core;
 
 namespace PingDong.CleanArchitect.Service
 {
-    public class ClientRequest : Entity<Guid>, IAggregateRoot
+    public class ClientRequest<T> : Entity<T>, IAggregateRoot
     {
         public ClientRequest(string name, DateTime time)
         {

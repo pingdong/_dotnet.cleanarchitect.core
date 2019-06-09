@@ -11,7 +11,7 @@ namespace PingDong.CleanArchitect.Core.UnitTests.Service
         {
             var time = DateTime.Now;
 
-            var req = new ClientRequest("name", time);
+            var req = new ClientRequest<Guid>("name", time);
 
             Assert.Equal(time, req.Time);
             Assert.Equal("name", req.Name);
@@ -22,7 +22,7 @@ namespace PingDong.CleanArchitect.Core.UnitTests.Service
         {
             var time = DateTime.Now;
 
-            var req = new ClientRequest("name", time);
+            var req = new ClientRequest<Guid>("name", time);
 
             Assert.Equal(typeof(Guid), req.Id.GetType());
         }
