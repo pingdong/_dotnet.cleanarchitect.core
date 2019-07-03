@@ -1,21 +1,20 @@
-﻿
-using System;
+﻿using System;
 
 namespace PingDong.CleanArchitect.Core
 {
     /// <summary>
     /// Exception type for domain exceptions
     /// </summary>
-    public class EventDomainException : Exception
+    public class DomainException : Exception
     {
-        public EventDomainException() : base()
+        public DomainException() : base()
         { }
 
-        public EventDomainException(string message)
+        public DomainException(string message)
             : base(message)
         { }
 
-        public EventDomainException(string message, Exception innerException)
+        public DomainException(string message, Exception innerException)
             : base(message, innerException)
         { }
     }
