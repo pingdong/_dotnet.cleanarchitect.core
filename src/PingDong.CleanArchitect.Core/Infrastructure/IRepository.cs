@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using PingDong.CleanArchitect.Core;
 
 namespace PingDong.CleanArchitect.Infrastructure
@@ -6,6 +7,8 @@ namespace PingDong.CleanArchitect.Infrastructure
     public interface IRepository<in TId, T> where T: Entity<TId>
     {
         IUnitOfWork UnitOfWork { get; }
+
+        Task<IList<T>> ListAsync();
 
         Task AddAsync(T entity);
 
