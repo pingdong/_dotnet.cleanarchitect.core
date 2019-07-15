@@ -24,6 +24,9 @@ namespace PingDong.CleanArchitect.Core
             if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
                 return false;
 
+            if (ReferenceEquals(left, null))
+                return true;
+
             return left.Equals(right);
         }
 

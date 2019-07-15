@@ -2,7 +2,6 @@
 using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
-using PingDong.Linq;
 
 namespace PingDong.CleanArchitect.Core
 {
@@ -12,16 +11,16 @@ namespace PingDong.CleanArchitect.Core
         {
             if (rules == null)
                 return;
-
-            var validators = rules.ToList();
-            if (validators.IsNullOrEmpty())
+            
+            var rulesList = rules.ToList();
+            if (!rulesList.Any())
                 return;
 
             var errors = new List<ValidationFailure>();
 
-            foreach (var validator in validators)
+            foreach (var rule in rulesList)
             {
-                var result = validator.Validate(entity);
+                var result = rule.Validate(entity);
 
                 if (!result.IsValid)
                     errors.AddRange(result.Errors);
