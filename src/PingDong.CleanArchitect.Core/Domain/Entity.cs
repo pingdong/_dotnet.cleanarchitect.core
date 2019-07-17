@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using MediatR;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PingDong.CleanArchitect.Core
 {
@@ -7,19 +7,26 @@ namespace PingDong.CleanArchitect.Core
     {
         #region Properties
         public virtual T Id { get; protected set; }
+
+        public Guid TenantId { get; set; }
+
+        public Guid CorrelationId { get; set; }
         #endregion
 
         #region Domain Events
-        private List<INotification> _domainEvents;
-        public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly();
+        private List<DomainEvent> _domainEvents;
+        public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents?.AsReadOnly();
 
-        public void AddDomainEvent(INotification eventItem)
+        public void AddDomainEvent(DomainEvent @event)
         {
-            _domainEvents = _domainEvents ?? new List<INotification>();
-            _domainEvents.Add(eventItem);
+            @event.CorrelationId = CorrelationId;
+            @event.TenantId = TenantId;
+
+            _domainEvents = _domainEvents ?? new List<DomainEvent>();
+            _domainEvents.Add(@event);
         }
 
-        public void RemoveDomainEvent(INotification eventItem)
+        public void RemoveDomainEvent(DomainEvent eventItem)
         {
             _domainEvents?.Remove(eventItem);
         }
