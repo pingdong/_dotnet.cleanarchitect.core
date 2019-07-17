@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using System;
 using Xunit;
 
 namespace PingDong.CleanArchitect.Core.UnitTests
@@ -27,7 +27,7 @@ namespace PingDong.CleanArchitect.Core.UnitTests
         }
     }
 
-    public class TestNotification : INotification
+    public class TestNotification : DomainEvent
     {
 
     }
@@ -163,6 +163,31 @@ namespace PingDong.CleanArchitect.Core.UnitTests
 
             t.ClearDomainEvents();
             Assert.Empty(t.DomainEvents);
+        }
+
+        [Fact]
+        public void CorrelationIdAndTenantId_EmptyCtor()
+        {
+            var entity = new TestEntity("Test");
+
+            Assert.Equal(default, entity.CorrelationId);
+            Assert.Equal(default, entity.TenantId);
+        }
+
+        [Fact]
+        public void CorrelationIdAndTenantId_Property()
+        {
+            var correlationId = Guid.NewGuid();
+            var tenantId = Guid.NewGuid();
+
+            var entity = new TestEntity("Test")
+            {
+                CorrelationId = correlationId,
+                TenantId = tenantId
+            };
+
+            Assert.Equal(correlationId, entity.CorrelationId);
+            Assert.Equal(tenantId, entity.TenantId);
         }
     }
 }

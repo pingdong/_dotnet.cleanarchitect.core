@@ -4,7 +4,7 @@ namespace PingDong.CleanArchitect.Service
 {
     public class RequestDuplicatedException : Exception
     {
-        public RequestDuplicatedException() : base()
+        public RequestDuplicatedException()
         { }
 
         public RequestDuplicatedException(string message)
