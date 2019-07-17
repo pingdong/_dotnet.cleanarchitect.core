@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 
 namespace PingDong.CleanArchitect.Core.UnitTests
 {
@@ -9,26 +10,36 @@ namespace PingDong.CleanArchitect.Core.UnitTests
         {
             var evt = new DomainEvent();
 
-            Assert.Null(evt.CorrelationId);
+            Assert.Equal(default, evt.CorrelationId);
+            Assert.Equal(default, evt.TenantId);
         }
 
         [Fact]
-        public void DomainEvent_WithCorrelationId()
+        public void DomainEvent_Ctor()
         {
-            var evt = new DomainEvent("Test");
+            var correlationId = Guid.NewGuid();
+            var tenantId = Guid.NewGuid();
 
-            Assert.Equal("Test", evt.CorrelationId);
+            var evt = new DomainEvent(tenantId, correlationId);
+
+            Assert.Equal(correlationId, evt.CorrelationId);
+            Assert.Equal(tenantId, evt.TenantId);
         }
 
         [Fact]
-        public void DomainEvent_Property_CorrelationId()
+        public void DomainEvent_Property()
         {
+            var correlationId = Guid.NewGuid();
+            var tenantId = Guid.NewGuid();
+
             var evt = new DomainEvent
             {
-                CorrelationId = "Test"
+                CorrelationId = correlationId,
+                TenantId = tenantId
             };
 
-            Assert.Equal("Test", evt.CorrelationId);
+            Assert.Equal(correlationId, evt.CorrelationId);
+            Assert.Equal(tenantId, evt.TenantId);
         }
     }
 }
