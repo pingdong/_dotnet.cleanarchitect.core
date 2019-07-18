@@ -13,7 +13,7 @@ namespace PingDong.CleanArchitect.Core
         public IntegrationEvent(string requestId, string tenantId, string correlationId)
         {
             RequestId = requestId;
-            CreationDate = DateTime.UtcNow;
+            CreationDateInUtc = DateTime.UtcNow;
             CorrelationId = correlationId;
             TenantId = tenantId;
         }
@@ -21,6 +21,6 @@ namespace PingDong.CleanArchitect.Core
         public string RequestId  { get; set; }
         public string CorrelationId { get; set; }
         public string TenantId { get; set; }
-        public DateTime CreationDate { get; }
+        public DateTime CreationDateInUtc { get; }
     }
 }
