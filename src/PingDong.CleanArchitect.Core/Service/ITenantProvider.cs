@@ -1,9 +1,7 @@
-﻿using System;
-
-namespace PingDong.CleanArchitect.Service
+﻿namespace PingDong.CleanArchitect.Service
 {
-    public interface ITenantProvider
+    public interface ITenantProvider<out T>
     {
-        Guid GetTenantId();
+        T GetTenantId();
     }
 }
