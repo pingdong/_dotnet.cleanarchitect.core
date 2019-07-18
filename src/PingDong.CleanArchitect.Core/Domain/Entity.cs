@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace PingDong.CleanArchitect.Core
 {
@@ -8,9 +7,9 @@ namespace PingDong.CleanArchitect.Core
         #region Properties
         public virtual T Id { get; protected set; }
 
-        public Guid TenantId { get; set; }
+        public string TenantId { get; set; }
 
-        public Guid CorrelationId { get; set; }
+        public string CorrelationId { get; set; }
         #endregion
 
         #region Domain Events

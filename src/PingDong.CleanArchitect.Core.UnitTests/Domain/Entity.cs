@@ -177,8 +177,8 @@ namespace PingDong.CleanArchitect.Core.UnitTests
         [Fact]
         public void CorrelationIdAndTenantId_Property()
         {
-            var correlationId = Guid.NewGuid();
-            var tenantId = Guid.NewGuid();
+            var correlationId = Guid.NewGuid().ToString();
+            var tenantId = Guid.NewGuid().ToString();
 
             var entity = new TestEntity("Test")
             {
