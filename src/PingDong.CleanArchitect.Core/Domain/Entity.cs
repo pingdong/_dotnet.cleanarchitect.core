@@ -39,7 +39,7 @@ namespace PingDong.CleanArchitect.Core
         #region Object
         public bool IsTransient()
         {
-            return EqualityComparer<T>.Default.Equals(this.Id, default(T));
+            return EqualityComparer<T>.Default.Equals(Id, default);
         }
 
         public override bool Equals(object obj)
