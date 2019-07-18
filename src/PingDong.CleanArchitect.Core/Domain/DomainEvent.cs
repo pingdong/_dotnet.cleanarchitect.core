@@ -1,5 +1,4 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 
 namespace PingDong.CleanArchitect.Core
 {
@@ -10,14 +9,14 @@ namespace PingDong.CleanArchitect.Core
 
         }
 
-        public DomainEvent(Guid tenantId, Guid correlationId)
+        public DomainEvent(string tenantId, string correlationId)
         {
             CorrelationId = correlationId;
             TenantId = tenantId;
         }
 
-        public Guid TenantId { get; set; }
+        public string TenantId { get; set; }
 
-        public Guid CorrelationId { get; set; }
+        public string CorrelationId { get; set; }
     }
 }

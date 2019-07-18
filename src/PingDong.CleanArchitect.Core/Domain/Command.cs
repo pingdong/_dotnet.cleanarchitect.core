@@ -1,23 +1,22 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 
 namespace PingDong.CleanArchitect.Core
 {
-    public class Command : IRequest<bool>
+    public class Command<TResult> : IRequest<TResult>
     {
         public Command()
         {
 
         }
 
-        public Command(Guid tenantId, Guid correlationId)
+        public Command(string tenantId, string correlationId)
         {
             CorrelationId = correlationId;
             TenantId = tenantId;
         }
 
-        public Guid TenantId { get; set; }
+        public string TenantId { get; set; }
 
-        public Guid CorrelationId { get; set; }
+        public string CorrelationId { get; set; }
     }
 }

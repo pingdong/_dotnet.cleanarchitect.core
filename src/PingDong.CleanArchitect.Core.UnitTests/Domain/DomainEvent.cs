@@ -17,8 +17,8 @@ namespace PingDong.CleanArchitect.Core.UnitTests
         [Fact]
         public void DomainEvent_Ctor()
         {
-            var correlationId = Guid.NewGuid();
-            var tenantId = Guid.NewGuid();
+            var correlationId = Guid.NewGuid().ToString();
+            var tenantId = Guid.NewGuid().ToString();
 
             var evt = new DomainEvent(tenantId, correlationId);
 
@@ -29,8 +29,8 @@ namespace PingDong.CleanArchitect.Core.UnitTests
         [Fact]
         public void DomainEvent_Property()
         {
-            var correlationId = Guid.NewGuid();
-            var tenantId = Guid.NewGuid();
+            var correlationId = Guid.NewGuid().ToString();
+            var tenantId = Guid.NewGuid().ToString();
 
             var evt = new DomainEvent
             {
