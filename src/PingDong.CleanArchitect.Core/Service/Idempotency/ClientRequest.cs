@@ -11,7 +11,7 @@ namespace PingDong.CleanArchitect.Service
             Time = time;
         }
 
-        public string Name { get; private set; }
-        public DateTime Time { get; private set; }
+        public string Name { get; }
+        public DateTime Time { get; }
     }
 }

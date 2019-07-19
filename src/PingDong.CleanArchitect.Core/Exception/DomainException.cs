@@ -7,7 +7,7 @@ namespace PingDong.CleanArchitect.Core
     /// </summary>
     public class DomainException : Exception
     {
-        public DomainException() : base()
+        public DomainException()
         { }
 
         public DomainException(string message)
