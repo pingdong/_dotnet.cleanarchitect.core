@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace PingDong.CleanArchitect.Core
+namespace PingDong.CleanArchitect.Core.Validation
 {
     public class ValidationViolatedException : Exception
     {
-        public ValidationViolatedException() : base()
+        public ValidationViolatedException()
         { }
 
         public ValidationViolatedException(string message)

@@ -2,11 +2,15 @@
 
 namespace PingDong.CleanArchitect.Core
 {
-    public abstract class Entity<T>
+    public abstract class Entity<T> : IMetadata
     {
         #region Properties
+
         public virtual T Id { get; protected set; }
 
+        #endregion
+
+        #region IMetadata
         public string TenantId { get; set; }
 
         public string CorrelationId { get; set; }
@@ -47,41 +51,43 @@ namespace PingDong.CleanArchitect.Core
             if (!(obj is Entity<T>))
                 return false;
 
-            if (object.ReferenceEquals(this, obj))
+            if (ReferenceEquals(this, obj))
                 return true;
 
-            if (this.GetType() != obj.GetType())
+            if (GetType() != obj.GetType())
                 return false;
 
             var item = (Entity<T>)obj;
 
-            if (item.IsTransient() || this.IsTransient())
+            if (item.IsTransient() || IsTransient())
                 return false;
             
-            return item.Id.Equals(this.Id);
+            return item.Id.Equals(Id);
         }
 
         public override int GetHashCode()
         {
             if (!IsTransient())
             {
-                if (!_requestedHashCode.HasValue)
+                if (!_hashCode.HasValue)
                     // XOR for random distribution (http://blogs.msdn.com/b/ericlippert/archive/2011/02/28/guidelines-and-rules-for-gethashcode.aspx)
-                    _requestedHashCode = this.Id.GetHashCode() ^ 31; 
+                    _hashCode = Id.GetHashCode() ^ 31; 
 
-                return _requestedHashCode.Value;
+                return _hashCode.Value;
             }
             
             return base.GetHashCode();
         }
-        private int? _requestedHashCode;
+        private int? _hashCode;
 
         public static bool operator == (Entity<T> left, Entity<T> right)
         {
-            if (object.Equals(left, null))
-                return object.Equals(right, null) ? true : false;
+            //if (Equals(left, null))
+            //    return Equals(right, null);
             
-            return left.Equals(right);
+            //return left.Equals(right);
+            
+            return left?.Equals(right) ?? Equals(right, null);
         }
 
         public static bool operator != (Entity<T> left, Entity<T> right)

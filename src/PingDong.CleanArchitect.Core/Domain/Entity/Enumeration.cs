@@ -12,9 +12,7 @@ namespace PingDong.CleanArchitect.Core
         public int Id { get; }
 
         protected Enumeration()
-        {
-        }
-
+        {}
         protected Enumeration(int id, string name)
         {
             Id = id;
@@ -56,7 +54,7 @@ namespace PingDong.CleanArchitect.Core
             if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
                 return false;
 
-            return left.Equals(right);
+            return left != null && left.Equals(right);
         }
 
         public static bool operator !=(Enumeration left, Enumeration right)
@@ -84,7 +82,7 @@ namespace PingDong.CleanArchitect.Core
             return matchingItem;
         }
 
-        private static T Parse<T, K>(K value, string description, Func<T, bool> predicate) where T : Enumeration, new()
+        private static T Parse<T, TValue>(TValue value, string description, Func<T, bool> predicate) where T : Enumeration, new()
         {
             var matchingItem = GetAll<T>().FirstOrDefault(predicate);
 
