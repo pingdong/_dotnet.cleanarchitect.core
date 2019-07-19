@@ -3,11 +3,12 @@ using System.Linq;
 using FluentValidation;
 using FluentValidation.Results;
 
-namespace PingDong.CleanArchitect.Core
+namespace PingDong.CleanArchitect.Core.Validation
 {
     public static class ValidationExtension
     {
-        public static void Validate<T>(this IEnumerable<IValidator<T>> rules, T entity) where T : IAggregateRoot
+        public static void Validate<T>(this IEnumerable<IValidator<T>> rules, T entity) 
+                                where T : IAggregateRoot
         {
             if (rules == null)
                 return;

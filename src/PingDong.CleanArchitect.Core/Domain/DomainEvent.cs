@@ -2,7 +2,7 @@
 
 namespace PingDong.CleanArchitect.Core
 {
-    public class DomainEvent : INotification
+    public class DomainEvent : INotification, IMetadata
     {
         public DomainEvent()
         {
