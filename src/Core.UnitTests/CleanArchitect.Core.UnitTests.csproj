@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PingDong.CleanArchitect.Core\PingDong.CleanArchitect.Core.csproj" />
+    <ProjectReference Include="..\Core\CleanArchitect.Core.csproj" />
   </ItemGroup>
 
 </Project>
