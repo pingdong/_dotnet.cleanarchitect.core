@@ -2,7 +2,7 @@
 
 namespace PingDong.CleanArchitect.Core
 {
-    public class IntegrationEvent : IMetadata
+    public class IntegrationEvent : ITracker
     {
         public IntegrationEvent() 
             : this(string.Empty, string.Empty, string.Empty)
@@ -21,7 +21,7 @@ namespace PingDong.CleanArchitect.Core
         public string RequestId  { get; set; }
         public DateTime CreationDateInUtc { get; }
 
-        #region IMetadata
+        #region ITracker
         public string CorrelationId { get; set; }
         public string TenantId { get; set; }
         #endregion

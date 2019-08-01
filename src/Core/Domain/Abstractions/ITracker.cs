@@ -1,7 +1,7 @@
 ﻿
 namespace PingDong.CleanArchitect.Core
 {
-    public interface IMetadata
+    public interface ITracker
     {
         string TenantId { get; set; }
 

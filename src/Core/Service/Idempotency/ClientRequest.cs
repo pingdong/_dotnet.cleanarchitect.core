@@ -1,16 +1,17 @@
 ﻿using System;
-using PingDong.CleanArchitect.Core;
 
 namespace PingDong.CleanArchitect.Service
 {
-    public class ClientRequest<T> : Entity<T>, IAggregateRoot
+    public class ClientRequest<T>
     {
-        public ClientRequest(string name, DateTime time)
+        public ClientRequest(T id, string name, DateTime time)
         {
+            Id = id;
             Name = name;
             Time = time;
         }
 
+        public T Id { get; }
         public string Name { get; }
         public DateTime Time { get; }
     }

@@ -2,7 +2,7 @@
 
 namespace PingDong.CleanArchitect.Core
 {
-    public class Command<TResult> : IRequest<TResult>, IMetadata
+    public class Command<TResult> : IRequest<TResult>, ITracker
     {
         public Command()
         {

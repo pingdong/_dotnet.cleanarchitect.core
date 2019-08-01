@@ -2,7 +2,7 @@
 
 namespace PingDong.CleanArchitect.Core
 {
-    public abstract class Entity<T> : IMetadata
+    public abstract class Entity<T> : ITracker
     {
         #region Properties
 
@@ -10,7 +10,7 @@ namespace PingDong.CleanArchitect.Core
 
         #endregion
 
-        #region IMetadata
+        #region ITracker
         public string TenantId { get; set; }
 
         public string CorrelationId { get; set; }
