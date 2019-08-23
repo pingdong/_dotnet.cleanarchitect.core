@@ -1,9 +1,7 @@
-﻿using System.Threading.Tasks;
-
-namespace PingDong.CleanArchitect.Service
+﻿namespace PingDong.CleanArchitect.Service
 {
-    public interface ITenantValidator
+    public interface ITenantValidator<in T>
     {
-        Task<bool> IsValidAsync(string tenantId);
+        bool IsValid(T tenantId);
     }
 }
