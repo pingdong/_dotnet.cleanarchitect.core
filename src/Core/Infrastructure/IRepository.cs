@@ -6,7 +6,7 @@ using PingDong.CleanArchitect.Core;
 
 namespace PingDong.CleanArchitect.Infrastructure
 {
-    public interface IRepository<in TId, T> where T: Entity<TId>
+    public interface IRepository<TId, T> where T: Entity<TId>
     {
         IUnitOfWork UnitOfWork { get; }
 
@@ -14,11 +14,17 @@ namespace PingDong.CleanArchitect.Infrastructure
 
         Task AddAsync(T entity);
 
+        Task AddAsync(IList<T> entities);
+
         Task RemoveAsync(TId id);
 
-        Task UpdateAsync(T entity);
+        Task RemoveAsync(IList<TId> id);
 
-        Task<T> FindByIdAsync(TId id);
+        Task UpdateAsync(T entity);
+        
+        Task UpdateAsync(IList<T> entities);
+
+        Task<T> FindByIdAsync(TId id, bool throwIfMissing = true);
 
         Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
 
