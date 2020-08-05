@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using PingDong.CleanArchitect.Core;
 
-namespace PingDong.CleanArchitect.Infrastructure
+namespace PingDong.CleanArchitect.Infrastructure.SqlServer
 {
     public interface IRepository<TId, T> where T: Entity<TId>
     {

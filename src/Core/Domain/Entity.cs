@@ -2,7 +2,7 @@
 
 namespace PingDong.CleanArchitect.Core
 {
-    public abstract class Entity<T> : ITracker
+    public abstract class Entity<T> : ITracing
     {
         #region Properties
 
@@ -10,13 +10,16 @@ namespace PingDong.CleanArchitect.Core
 
         #endregion
 
-        #region ITracker
+        #region ITracing
+
         public string TenantId { get; set; }
 
         public string CorrelationId { get; set; }
+
         #endregion
 
         #region Domain Events
+
         private List<DomainEvent> _domainEvents;
         public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents?.AsReadOnly();
 
@@ -38,9 +41,11 @@ namespace PingDong.CleanArchitect.Core
         {
             _domainEvents?.Clear();
         }
+
         #endregion
 
         #region Object
+
         public bool IsTransient()
         {
             return EqualityComparer<T>.Default.Equals(Id, default);
@@ -70,7 +75,8 @@ namespace PingDong.CleanArchitect.Core
             if (!IsTransient())
             {
                 if (!_hashCode.HasValue)
-                    // XOR for random distribution (http://blogs.msdn.com/b/ericlippert/archive/2011/02/28/guidelines-and-rules-for-gethashcode.aspx)
+                    // XOR for random distribution
+                    // http://blogs.msdn.com/b/ericlippert/archive/2011/02/28/guidelines-and-rules-for-gethashcode.aspx
                     _hashCode = Id.GetHashCode() ^ 31; 
 
                 return _hashCode.Value;
@@ -94,6 +100,7 @@ namespace PingDong.CleanArchitect.Core
         {
             return !(left == right);
         }
+
         #endregion
     }
 }

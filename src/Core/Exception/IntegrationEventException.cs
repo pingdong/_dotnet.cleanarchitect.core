@@ -8,10 +8,6 @@ namespace PingDong.CleanArchitect.Core
     /// </summary>
     public class IntegrationEventException : DomainException
     {
-        public IntegrationEventException()
-        {
-        }
-
         public IntegrationEventException(int eventId, string message)
             : this(new EventId(eventId), message, null, null)
         {
@@ -22,17 +18,17 @@ namespace PingDong.CleanArchitect.Core
         {
         }
 
-        public IntegrationEventException(int eventId, string message, ITracker tracker)
+        public IntegrationEventException(int eventId, string message, ITracing tracker)
             : this(new EventId(eventId), message, null, tracker)
         {
         }
 
-        public IntegrationEventException(EventId eventId, string message, ITracker tracker)
+        public IntegrationEventException(EventId eventId, string message, ITracing tracker)
             : this(eventId, message, null, tracker)
         {
         }
 
-        public IntegrationEventException(EventId eventId, string message, Exception innerException, ITracker tracker)
+        public IntegrationEventException(EventId eventId, string message, Exception innerException, ITracing tracker)
             : base(eventId, message, innerException, tracker)
         {
         }

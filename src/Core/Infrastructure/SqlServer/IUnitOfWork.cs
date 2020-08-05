@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PingDong.CleanArchitect.Core
+namespace PingDong.CleanArchitect.Infrastructure.SqlServer
 {
     public interface IUnitOfWork : IDisposable
     {        

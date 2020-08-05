@@ -2,8 +2,10 @@
 
 namespace PingDong.CleanArchitect.Core
 {
-    public class IntegrationEvent : ITracker
+    public class IntegrationEvent : ITracing
     {
+        #region ctor
+
         public IntegrationEvent() 
             : this(string.Empty, string.Empty, string.Empty)
         {
@@ -14,16 +16,26 @@ namespace PingDong.CleanArchitect.Core
         {
             RequestId = requestId;
             CreationDateInUtc = DateTime.UtcNow;
+
             CorrelationId = correlationId;
             TenantId = tenantId;
         }
 
+        #endregion
+
+        #region Properties
+
         public string RequestId  { get; set; }
         public DateTime CreationDateInUtc { get; }
 
-        #region ITracker
-        public string CorrelationId { get; set; }
+        #endregion
+
+        #region ITracing
+
         public string TenantId { get; set; }
+
+        public string CorrelationId { get; set; }
+
         #endregion
     }
 }

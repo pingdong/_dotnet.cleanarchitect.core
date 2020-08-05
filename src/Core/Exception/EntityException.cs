@@ -8,9 +8,6 @@ namespace PingDong.CleanArchitect.Core
     /// </summary>
     public class EntityException : DomainException
     {
-        public EntityException()
-        { }
-
         public EntityException(int eventId, string message)
             : this(new EventId(eventId), message, null, null)
         { }
@@ -19,15 +16,15 @@ namespace PingDong.CleanArchitect.Core
             : this(eventId, message, null, null)
         { }
 
-        public EntityException(int eventId, string message, ITracker tracker)
+        public EntityException(int eventId, string message, ITracing tracker)
             : this(new EventId(eventId), message, null, tracker)
         { }
 
-        public EntityException(EventId eventId, string message, ITracker tracker)
+        public EntityException(EventId eventId, string message, ITracing tracker)
             : this(eventId, message, null, tracker)
         { }
 
-        public EntityException(EventId eventId, string message, Exception innerException, ITracker tracker)
+        public EntityException(EventId eventId, string message, Exception innerException, ITracing tracker)
             : base(eventId, message, innerException, tracker)
         { }
     }

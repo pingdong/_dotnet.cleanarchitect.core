@@ -13,8 +13,8 @@ namespace PingDong.CleanArchitect.Core
                
         public static readonly EventId InvalidData = new EventId(201);
         public static readonly EventId RequestDataNotExisted = new EventId(202);
-        public static readonly EventId ViolateBusinessLogic = new EventId(203);
-        public static readonly EventId ViolateDataValidation = new EventId(204);
+        public static readonly EventId RequestDataDuplicated = new EventId(203);
+        public static readonly EventId BusinessLogicViolated = new EventId(204);
                
         public static readonly EventId InvalidDomainEvent = new EventId(400);
                

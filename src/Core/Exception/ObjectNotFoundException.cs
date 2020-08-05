@@ -7,7 +7,7 @@ namespace PingDong.CleanArchitect.Core
     /// </summary>
     public class ObjectNotFoundException : DomainException
     {
-        public ObjectNotFoundException(string target, string id, ITracker tracker)
+        public ObjectNotFoundException(string target, string id, ITracing tracker)
             : base(EventIds.RequestDataNotExisted, $"The specified {target} '{id}' doesn't exist", tracker)
         {
             Id = id;
@@ -15,6 +15,7 @@ namespace PingDong.CleanArchitect.Core
         }
 
         public string Id { get; }
+
         public string Target { get; }
     }
 }

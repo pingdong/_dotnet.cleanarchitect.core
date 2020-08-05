@@ -7,19 +7,60 @@ namespace PingDong.CleanArchitect.Core
 {
     public abstract class Enumeration : IComparable
     {
-        public string Name { get; }
+        #region ctor
 
-        public int Id { get; }
-
-        protected Enumeration()
-        {}
+        protected Enumeration() {}
         protected Enumeration(int id, string name)
         {
             Id = id;
             Name = name;
         }
 
+        #endregion
+
+        #region Properties
+
+        public string Name { get; }
+
+        public int Id { get; }
+
+        #endregion
+
+        #region Base Methods
+
         public override string ToString() => Name;
+
+        public override bool Equals(object obj)
+        {
+            var otherValue = obj as Enumeration;
+
+            if (otherValue == null)
+                return false;
+
+            var typeMatches = GetType() == obj.GetType();
+            var valueMatches = Id.Equals(otherValue.Id);
+
+            return typeMatches && valueMatches;
+        }
+
+        public override int GetHashCode() => Id.GetHashCode();
+
+        public static bool operator ==(Enumeration left, Enumeration right)
+        {
+            if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
+                return false;
+
+            return left != null && left.Equals(right);
+        }
+
+        public static bool operator !=(Enumeration left, Enumeration right)
+        {
+            return !(left == right);
+        }
+
+        #endregion
+
+        #region Methods
 
         public static IEnumerable<T> GetAll<T>() where T : Enumeration, new()
         {
@@ -35,34 +76,6 @@ namespace PingDong.CleanArchitect.Core
                     yield return locatedValue;
             }
         }
-
-        public override bool Equals(object obj)
-        {
-            var otherValue = obj as Enumeration;
-
-            if (otherValue == null)
-                return false;
-
-            var typeMatches = GetType() == obj.GetType();
-            var valueMatches = Id.Equals(otherValue.Id);
-
-            return typeMatches && valueMatches;
-        }
-
-        public static bool operator ==(Enumeration left, Enumeration right)
-        {
-            if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
-                return false;
-
-            return left != null && left.Equals(right);
-        }
-
-        public static bool operator !=(Enumeration left, Enumeration right)
-        {
-            return !(left == right);
-        }
-
-        public override int GetHashCode() => Id.GetHashCode();
 
         public static int AbsoluteDifference(Enumeration firstValue, Enumeration secondValue)
         {
@@ -92,6 +105,12 @@ namespace PingDong.CleanArchitect.Core
             return matchingItem;
         }
 
+        #endregion
+
+        #region IComparable
+
         public int CompareTo(object other) => Id.CompareTo(((Enumeration) other).Id);
+
+        #endregion
     }
 }
