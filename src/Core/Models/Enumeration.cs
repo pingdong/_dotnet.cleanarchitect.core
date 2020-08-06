@@ -48,27 +48,31 @@ namespace PingDong.CleanArchitect.Core
         public static bool operator ==(Enumeration left, Enumeration right)
         {
             if (ReferenceEquals(left, null))
-            {
                 return ReferenceEquals(right, null);
-            }
+            
             return left.Equals(right);
         }
+
         public static bool operator !=(Enumeration left, Enumeration right)
         {
             return !(left == right);
         }
+
         public static bool operator <(Enumeration left, Enumeration right)
         {
             return (Compare(left, right) < 0);
         }
+
         public static bool operator >(Enumeration left, Enumeration right)
         {
             return (Compare(left, right) > 0);
         }
+
         public static bool operator <=(Enumeration left, Enumeration right)
         {
             return (Compare(left, right) < 0);
         }
+
         public static bool operator >=(Enumeration left, Enumeration right)
         {
             return (Compare(left, right) > 0);
@@ -80,14 +84,12 @@ namespace PingDong.CleanArchitect.Core
 
         public static int Compare(Enumeration left, Enumeration right)
         {
-            if (object.ReferenceEquals(left, right))
-            {
+            if (ReferenceEquals(left, right))
                 return 0;
-            }
-            if (object.ReferenceEquals(left, null))
-            {
+
+            if (ReferenceEquals(left, null))
                 return -1;
-            }
+            
             return left.CompareTo(right);
         }
 
