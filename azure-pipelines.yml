@@ -171,6 +171,10 @@ stages:
         packDirectory: '$(Build.ArtifactStagingDirectory)/$(local.artifact)'
         arguments: '--configuration $(build.configuration.release)'
 
+    - publish: $(Build.ArtifactStagingDirectory)/$(local.artifact)
+      displayName: Publishing
+      artifact: $(local.artifact)
+
   - job: Release
     displayName: Release Packaging
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
@@ -187,29 +191,15 @@ stages:
         command: pack
         packagesToPack: '**/$(local.projectName).csproj'
         packDirectory: '$(Build.ArtifactStagingDirectory)/$(local.artifact)'
-        arguments: '--configuration $(build.configuration.release)'
+        arguments: '--configuration $(build.configuration.release)' 
 
-- stage: Publish
-  displayName: Publish
-  dependsOn: Package
-  condition: succeeded()
-  jobs:
-  - job: Publish
-    displayName: Publishing
-    pool:
-      vmImage: $(build.pool)
-    workspace:
-      clean: all
-    variables:
-    - group: Build.NuGet
-    steps:    
     - publish: $(Build.ArtifactStagingDirectory)/$(local.artifact)
       displayName: Publishing
       artifact: $(local.artifact)
 
-- stage: Deploy
-  displayName: Deploy
-  dependsOn: Publish
+- stage: Publish
+  displayName: Publish
+  dependsOn: Package
   condition: succeeded()
   jobs:
   - deployment:
