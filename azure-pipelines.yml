@@ -213,7 +213,6 @@ stages:
   jobs:
   - deployment:
     displayName: Prerelease
-    dependsOn: Publish
     condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
     pool:
       vmImage: $(build.pool)
@@ -242,7 +241,6 @@ stages:
   - deployment:
     displayName: Release
     environment: NuGet-Repo
-    dependsOn: Publish
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
     pool:
       vmImage: $(build.pool)
