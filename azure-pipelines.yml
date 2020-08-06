@@ -82,19 +82,11 @@ stages:
     # Coverage Report
     - task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@4
       displayName: Generating Test Coverage Report
-      condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+      condition: ne(variables['Build.Reason'], 'PullRequest')
       inputs:
-        reports: '$(Build.SourcesDirectory)/**/coverage.opencover.xml'
+        reports: '$(Build.SourcesDirectory)/**/opencover.xml'
         targetdir: $(Build.SourcesDirectory)/Coverage
-        reporttypes: HtmlInline_AzurePipelines;Cobertura;Badges
-
-    - task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@4
-      displayName: Generating Test Coverage Report
-      condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
-      inputs:
-        reports: '$(Build.SourcesDirectory)/**/coverage.opencover.xml'
-        targetdir: $(Build.SourcesDirectory)/Coverage
-        reporttypes: HtmlInline_AzurePipelines;Cobertura;Badges
+        reporttypes: Html;HtmlInline_AzurePipelines_Dark;Cobertura;Badges
         historydir: $(local.codecoveragehistory.directory)
 
     - task: UniversalPackages@0
@@ -112,6 +104,7 @@ stages:
 
     - task: PublishCodeCoverageResults@1
       displayName: Publishing Test Coverage Report
+      condition: ne(variables['Build.Reason'], 'PullRequest')
       inputs:
         codeCoverageTool: Cobertura
         summaryFileLocation: $(Build.SourcesDirectory)/Coverage/Cobertura.xml
