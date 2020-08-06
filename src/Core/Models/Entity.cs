@@ -86,16 +86,6 @@ namespace PingDong.CleanArchitect.Core
         }
         private int? _hashCode;
 
-        public static bool operator == (Entity<T> left, Entity<T> right)
-        {
-            return Equals(left, null) ? Equals(right, null) : left.Equals(right);
-        }
-
-        public static bool operator != (Entity<T> left, Entity<T> right)
-        {
-            return !(left == right);
-        }
-
         #endregion
     }
 }
