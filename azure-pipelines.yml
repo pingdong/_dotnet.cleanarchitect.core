@@ -84,7 +84,7 @@ stages:
       displayName: Generating Test Coverage Report
       condition: ne(variables['Build.Reason'], 'PullRequest')
       inputs:
-        reports: '$(Build.SourcesDirectory)/**/opencover.xml'
+        reports: '$(Build.SourcesDirectory)/**/coverage.opencover.xml'
         targetdir: $(Build.SourcesDirectory)/Coverage
         reporttypes: Html;HtmlInline_AzurePipelines_Dark;Cobertura;Badges
         historydir: $(local.codecoveragehistory.directory)
