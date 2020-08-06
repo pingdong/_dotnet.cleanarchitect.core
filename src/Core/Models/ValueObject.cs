@@ -1,38 +1,22 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace PingDong.CleanArchitect.Core
 {
     public abstract class ValueObject
     {
-        //protected static bool EqualOperator(ValueObject left, ValueObject right)
-        //{
-        //    if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
-        //    {
-        //        return false;
-        //    }
-        //    return ReferenceEquals(left, null) || left.Equals(right);
-        //}
-
-        //protected static bool NotEqualOperator(ValueObject left, ValueObject right)
-        //{
-        //    return !(EqualOperator(left, right));
-        //}
-
-        public static bool operator ==(ValueObject left, ValueObject right)
+        protected static bool EqualOperator(ValueObject left, ValueObject right)
         {
             if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
+            {
                 return false;
-
-            if (ReferenceEquals(left, null))
-                return true;
-
-            return left.Equals(right);
+            }
+            return ReferenceEquals(left, null) || left.Equals(right);
         }
 
-        public static bool operator !=(ValueObject left, ValueObject right)
+        protected static bool NotEqualOperator(ValueObject left, ValueObject right)
         {
-            return !(left == right);
+            return !(EqualOperator(left, right));
         }
 
         protected abstract IEnumerable<object> GetAtomicValues();

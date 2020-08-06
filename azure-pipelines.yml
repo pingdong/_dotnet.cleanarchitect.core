@@ -9,7 +9,7 @@ trigger:
 variables:
 - group : Build
 - name  : local.projectName
-  value : 'cleanarchitect.core'
+  value : 'dotnet.cleanarchitect.Core'
 - name  : local.artifact
   value : 'packages'
 
@@ -47,8 +47,8 @@ stages:
         projectKey: ${{ lower(variables['local.projectName']) }}
         projectName: ${{ lower(variables['local.projectName']) }}
         extraProperties: |
-        sonar.coverage.exclusions=**/*[Uu]nit[Tt]ests*/**/*
-        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
+          sonar.coverage.exclusions=**/*[Uu]nit[Tt]ests*/**/*
+          sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
 
     - task: UniversalPackages@0
       displayName: Getting Test Coverage History
@@ -77,21 +77,16 @@ stages:
         command: test
         arguments: '--no-build --configuration $(build.configuration.release) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover'
         publishTestResults: true
-        projects: '**/*[Tt]ests/*.csproj'
+        projects: '**/*.[Uu]nit[Tt]ests/*.csproj'
 
     # Coverage Report
     - task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@4
       displayName: Generating Test Coverage Report
-      condition: |
-        or 
-        (
-          eq(variables['Build.SourceBranch'], 'refs/heads/master'),
-          eq(variables['Build.Reason'], 'PullRequest')
-        )
+      condition: ne(variables['Build.Reason'], 'PullRequest')
       inputs:
         reports: '$(Build.SourcesDirectory)/**/coverage.opencover.xml'
         targetdir: $(Build.SourcesDirectory)/Coverage
-        reporttypes: HtmlInline_AzurePipelines;Cobertura;Badges
+        reporttypes: Html;HtmlInline_AzurePipelines_Dark;Cobertura;Badges
         historydir: $(local.codecoveragehistory.directory)
 
     - task: UniversalPackages@0
@@ -109,12 +104,7 @@ stages:
 
     - task: PublishCodeCoverageResults@1
       displayName: Publishing Test Coverage Report
-      condition: |
-        or 
-        (
-          eq(variables['Build.SourceBranch'], 'refs/heads/master'),
-          eq(variables['Build.Reason'], 'PullRequest')
-        )
+      condition: ne(variables['Build.Reason'], 'PullRequest')
       inputs:
         codeCoverageTool: Cobertura
         summaryFileLocation: $(Build.SourcesDirectory)/Coverage/Cobertura.xml
@@ -154,7 +144,7 @@ stages:
   condition: succeeded()
   jobs:
   - job: Prerelease
-    displayName: Prerelease Packaging
+    displayName: Prerelease
     condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
     pool:
       vmImage: $(build.pool)
@@ -167,13 +157,16 @@ stages:
       displayName: Creating Prerelease Package
       inputs:
         command: pack
-        buildProperties: $(nuget.prerelease.suffix)
+        buildProperties: $(nuget.pack.properties)
         packDirectory: '$(Build.ArtifactStagingDirectory)/$(local.artifact)'
         arguments: '--configuration $(build.configuration.release)'
-        versioningScheme: byPrereleaseNumber # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core-cli?view=azure-devops#yaml-snippet
+
+    - publish: $(Build.ArtifactStagingDirectory)/$(local.artifact)
+      displayName: Publishing
+      artifact: $(local.artifact)
 
   - job: Release
-    displayName: Release Packaging
+    displayName: Release
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
     pool:
       vmImage: $(build.pool)
@@ -187,87 +180,77 @@ stages:
       inputs:
         command: pack
         packDirectory: '$(Build.ArtifactStagingDirectory)/$(local.artifact)'
-        arguments: '--configuration $(build.configuration.release)'
+        arguments: '--configuration $(build.configuration.release)' 
+
+    - publish: $(Build.ArtifactStagingDirectory)/$(local.artifact)
+      displayName: Publishing
+      artifact: $(local.artifact)
 
 - stage: Publish
   displayName: Publish
   dependsOn: Package
   condition: succeeded()
   jobs:
-  - job: Publish
-    displayName: Publishing
+  - deployment:
+    displayName: Prerelease
+    environment: NuGet-Prerelease
+    condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
     pool:
       vmImage: $(build.pool)
     workspace:
       clean: all
     variables:
     - group: Build.NuGet
-    steps:    
-    - publish: $(Build.ArtifactStagingDirectory)/$(local.artifact)
-      displayName: Publishing
-      artifact: $(local.artifact)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: none
 
-- deployment:
-  displayName: Prerelease
-  dependsOn: Publish
-  condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
-  pool:
-    vmImage: $(build.pool)
-  workspace:
-    clean: all
-  variables:
-  - group: Build.NuGet
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-        - checkout: none
+          - download: current
+            displayName: Download artifacts
+            artifact: $(local.artifact)
 
-        - download: current
-          displayName: Download artifacts
-          artifact: $(local.artifact)
+          - task: NuGetCommand@2
+            displayName: 'Pushing to Feed: $(nuget.artifact.feed.prerelease)'
+            inputs:
+              command: push
+              packagesToPush: '$(Agent.BuildDirectory)/$(local.artifact)/*.nupkg'
+              nuGetFeedType: internal
+              publishVstsFeed: $(nuget.artifact.feed.prerelease)
 
-        - task: NuGetCommand@2
-          displayName: 'Pushing to Feed: $(nuget.artifact.feed.prerelease)'
-          inputs:
-            command: push
-            packagesToPush: '$(Agent.BuildDirectory)/$(local.artifact)/*.nupkg'
-            nuGetFeedType: internal
-            publishVstsFeed: $(nuget.artifact.feed.prerelease)
+  - deployment:
+    displayName: Release
+    environment: NuGet
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    pool:
+      vmImage: $(build.pool)
+    workspace:
+      clean: all
+    variables:
+    - group: Build.NuGet
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: none
 
-- deployment:
-  displayName: Release
-  environment: NuGet-Repo
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
-  dependsOn: Publish
-  pool:
-    vmImage: $(build.pool)
-  workspace:
-    clean: all
-  variables:
-  - group: Build.NuGet
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-        - checkout: none
+          - download: current
+            displayName: Download artifacts
+            artifact: $(local.artifact)
 
-        - download: current
-          displayName: Download artifacts
-          artifact: $(local.artifact)
+          - task: NuGetCommand@2
+            displayName: 'Pushing to Feed: $(nuget.artifact.feed.production)'
+            inputs:
+              command: push
+              packagesToPush: '$(Agent.BuildDirectory)/$(local.artifact)/*.nupkg'
+              nuGetFeedType: internal
+              publishVstsFeed: $(nuget.artifact.feed.production)
+              allowPackageConflicts: true
 
-        - task: NuGetCommand@2
-          displayName: 'Pushing to Feed: $(nuget.artifact.feed.production)'
-          inputs:
-            command: push
-            packagesToPush: '$(Agent.BuildDirectory)/$(local.artifact)/*.nupkg'
-            nuGetFeedType: internal
-            publishVstsFeed: $(nuget.artifact.feed.production)
-            allowPackageConflicts: true
-
-        - task: DotNetCoreCLI@2
-          displayName: Pushing to NuGet.org
-          inputs:
-            command: custom
-            custom: nuget
-            arguments: 'push $(Agent.BuildDirectory)/$(local.artifact)/*.nupkg --source $(nuget.org.source) --api-key $(nuget.org.apiKey) --skip-duplicate'
+          - task: DotNetCoreCLI@2
+            displayName: Pushing to NuGet.org
+            inputs:
+              command: custom
+              custom: nuget
+              arguments: 'push $(Agent.BuildDirectory)/$(local.artifact)/*.nupkg --source $(nuget.org.source) --api-key $(nuget.org.apiKey) --skip-duplicate'

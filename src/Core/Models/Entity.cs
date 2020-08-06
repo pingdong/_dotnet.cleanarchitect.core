@@ -28,7 +28,7 @@ namespace PingDong.CleanArchitect.Core
             @event.CorrelationId = CorrelationId;
             @event.TenantId = TenantId;
 
-            _domainEvents = _domainEvents ?? new List<DomainEvent>();
+            _domainEvents ??= new List<DomainEvent>();
             _domainEvents.Add(@event);
         }
 
@@ -75,31 +75,15 @@ namespace PingDong.CleanArchitect.Core
             if (!IsTransient())
             {
                 if (!_hashCode.HasValue)
-                    // XOR for random distribution
-                    // http://blogs.msdn.com/b/ericlippert/archive/2011/02/28/guidelines-and-rules-for-gethashcode.aspx
-                    _hashCode = Id.GetHashCode() ^ 31; 
+                    // XOR for random distribution (http://blogs.msdn.com/b/ericlippert/archive/2011/02/28/guidelines-and-rules-for-gethashcode.aspx)
+                    _hashCode = Id.GetHashCode() ^ 31;
 
                 return _hashCode.Value;
             }
-            
-            return base.GetHashCode();
+
+            return default(int).GetHashCode();
         }
         private int? _hashCode;
-
-        public static bool operator == (Entity<T> left, Entity<T> right)
-        {
-            //if (Equals(left, null))
-            //    return Equals(right, null);
-            
-            //return left.Equals(right);
-            
-            return left?.Equals(right) ?? Equals(right, null);
-        }
-
-        public static bool operator != (Entity<T> left, Entity<T> right)
-        {
-            return !(left == right);
-        }
 
         #endregion
     }

@@ -47,10 +47,10 @@ namespace PingDong.CleanArchitect.Core
 
         public static bool operator ==(Enumeration left, Enumeration right)
         {
-            if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
-                return false;
-
-            return left != null && left.Equals(right);
+            if (ReferenceEquals(left, null))
+                return ReferenceEquals(right, null);
+            
+            return left.Equals(right);
         }
 
         public static bool operator !=(Enumeration left, Enumeration right)
@@ -58,9 +58,40 @@ namespace PingDong.CleanArchitect.Core
             return !(left == right);
         }
 
+        public static bool operator <(Enumeration left, Enumeration right)
+        {
+            return (Compare(left, right) < 0);
+        }
+
+        public static bool operator >(Enumeration left, Enumeration right)
+        {
+            return (Compare(left, right) > 0);
+        }
+
+        public static bool operator <=(Enumeration left, Enumeration right)
+        {
+            return (Compare(left, right) < 0);
+        }
+
+        public static bool operator >=(Enumeration left, Enumeration right)
+        {
+            return (Compare(left, right) > 0);
+        }
+
         #endregion
 
         #region Methods
+
+        public static int Compare(Enumeration left, Enumeration right)
+        {
+            if (ReferenceEquals(left, right))
+                return 0;
+
+            if (ReferenceEquals(left, null))
+                return -1;
+            
+            return left.CompareTo(right);
+        }
 
         public static IEnumerable<T> GetAll<T>() where T : Enumeration, new()
         {
@@ -109,7 +140,7 @@ namespace PingDong.CleanArchitect.Core
 
         #region IComparable
 
-        public int CompareTo(object other) => Id.CompareTo(((Enumeration) other).Id);
+        public int CompareTo(object obj) => Id.CompareTo(((Enumeration) obj).Id);
 
         #endregion
     }

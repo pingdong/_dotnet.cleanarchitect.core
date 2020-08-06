@@ -2,7 +2,7 @@
 
 namespace PingDong.CleanArchitect.Core
 {
-    public sealed class EventIds
+    public static class EventIds
     {
         public static readonly EventId Failure = new EventId(0);
         public static readonly EventId Success = new EventId(1);

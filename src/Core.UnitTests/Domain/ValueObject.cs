@@ -37,13 +37,9 @@ namespace PingDong.CleanArchitect.Core.UnitTests
 
             Assert.Equal(t1, t3);
             Assert.True(t1.Equals(t3));
-            Assert.True(t1 == t3);
-            Assert.False(t1 != t3);
 
             Assert.NotEqual(t1, t2);
             Assert.False(t1.Equals(t2));
-            Assert.False(t1 == t2);
-            Assert.True(t1 != t2);
         }
         [Fact]
         public void ValueObject_Clone()
@@ -53,8 +49,6 @@ namespace PingDong.CleanArchitect.Core.UnitTests
 
             Assert.Equal(t1, t2);
             Assert.True(t1.Equals(t2));
-            Assert.True(t1 == t2);
-            Assert.False(t1 != t2);
         }
     }
 }

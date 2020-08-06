@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Microsoft.Extensions.Logging;
 
 namespace PingDong.CleanArchitect.Core
@@ -6,6 +7,7 @@ namespace PingDong.CleanArchitect.Core
     /// <summary>
     /// Exception type for domain exceptions
     /// </summary>
+    [Serializable]
     public class DomainException : Exception
     {
         public DomainException(EventId eventId, string message, ITracing tracing)
@@ -19,6 +21,11 @@ namespace PingDong.CleanArchitect.Core
         {
             Tracing = tracing;
             EventId = eventId;
+        }
+
+        protected DomainException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
         }
 
         public ITracing Tracing { get; }
