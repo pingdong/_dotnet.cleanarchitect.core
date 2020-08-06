@@ -240,7 +240,6 @@ stages:
 
   - deployment:
     displayName: Release
-    environment: NuGet-Repo
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
     pool:
       vmImage: $(build.pool)
