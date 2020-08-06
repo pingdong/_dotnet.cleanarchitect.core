@@ -28,7 +28,7 @@ namespace PingDong.CleanArchitect.Core
             @event.CorrelationId = CorrelationId;
             @event.TenantId = TenantId;
 
-            _domainEvents = _domainEvents ?? new List<DomainEvent>();
+            _domainEvents ??= new List<DomainEvent>();
             _domainEvents.Add(@event);
         }
 
@@ -72,19 +72,16 @@ namespace PingDong.CleanArchitect.Core
 
         public override int GetHashCode()
         {
-            if (!IsTransient())
+            if (IsTransient())
             {
-                if (!_hashCode.HasValue)
-                    // XOR for random distribution
-                    // http://blogs.msdn.com/b/ericlippert/archive/2011/02/28/guidelines-and-rules-for-gethashcode.aspx
-                    _hashCode = Id.GetHashCode() ^ 31; 
-
-                return _hashCode.Value;
+                var obj = default(T);
+                return obj is null ? "null".GetHashCode() : obj.GetHashCode();
             }
-            
-            return default(T).GetHashCode();
+
+            // XOR for random distribution
+            // http://blogs.msdn.com/b/ericlippert/archive/2011/02/28/guidelines-and-rules-for-gethashcode.aspx
+            return Id.GetHashCode() ^ 422;
         }
-        private int? _hashCode;
 
         #endregion
     }
