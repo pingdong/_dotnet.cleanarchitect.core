@@ -26,13 +26,16 @@
     <Version>0.0.3.0</Version>
     <Authors>Ping Dong</Authors>
     <Copyright>Copyright (c) 2020 Ping Dong</Copyright>
-    <RepositoryUrl>https://github.com/pingdong/dotnet.cleanarchitect.core</RepositoryUrl>
+    <RepositoryUrl>https://github.com/pingdong/pingdong.cleanarchitect.core</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>dotnet library</PackageTags>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageProjectUrl>https://github.com/pingdong/dotnet.cleanarchitect.core</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/pingdong/pingdong.cleanarchitect.core</PackageProjectUrl>
     <LangVersion>7.3</LangVersion>
+    <Product>PingDong.CleanArchitect.Core</Product>
+    <AssemblyName>PingDong.CleanArchitect.Core</AssemblyName>
+    <RootNamespace>PingDong.CleanArchitect.Core</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
