@@ -47,8 +47,8 @@ stages:
         projectKey: ${{ lower(variables['local.projectName']) }}
         projectName: ${{ lower(variables['local.projectName']) }}
         extraProperties: |
-        sonar.coverage.exclusions=**/*[Uu]nit[Tt]ests*/**/*
-        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
+          sonar.coverage.exclusions=**/*[Uu]nit[Tt]ests*/**/*
+          sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
 
     - task: UniversalPackages@0
       displayName: Getting Test Coverage History
@@ -170,7 +170,6 @@ stages:
         buildProperties: $(nuget.prerelease.suffix)
         packDirectory: '$(Build.ArtifactStagingDirectory)/$(local.artifact)'
         arguments: '--configuration $(build.configuration.release)'
-        versioningScheme: byPrereleaseNumber # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core-cli?view=azure-devops#yaml-snippet
 
   - job: Release
     displayName: Release Packaging
