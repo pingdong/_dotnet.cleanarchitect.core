@@ -82,7 +82,7 @@ namespace PingDong.CleanArchitect.Core
                 return _hashCode.Value;
             }
             
-            return base.GetHashCode();
+            return default(T).GetHashCode();
         }
         private int? _hashCode;
 

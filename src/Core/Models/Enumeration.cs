@@ -45,6 +45,18 @@ namespace PingDong.CleanArchitect.Core
 
         public override int GetHashCode() => Id.GetHashCode();
 
+        public static bool operator ==(Enumeration left, Enumeration right)
+        {
+            if (ReferenceEquals(left, null))
+            {
+                return ReferenceEquals(right, null);
+            }
+            return left.Equals(right);
+        }
+        public static bool operator !=(Enumeration left, Enumeration right)
+        {
+            return !(left == right);
+        }
         public static bool operator <(Enumeration left, Enumeration right)
         {
             return (Compare(left, right) < 0);
@@ -126,7 +138,7 @@ namespace PingDong.CleanArchitect.Core
 
         #region IComparable
 
-        public int CompareTo(object other) => Id.CompareTo(((Enumeration) other).Id);
+        public int CompareTo(object obj) => Id.CompareTo(((Enumeration) obj).Id);
 
         #endregion
     }
