@@ -78,11 +78,6 @@ stages:
         arguments: '--no-build --configuration $(build.configuration.release) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover'
         publishTestResults: true
         projects: '**/*.[Uu]nit[Tt]ests/*.csproj'
-            
-    - task: PublishBuildArtifacts@1
-      inputs:
-        pathToPublish: '$(Agent.BuildDirectory)'
-        artifactName: drop
 
     # Coverage Report
     - task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@4
