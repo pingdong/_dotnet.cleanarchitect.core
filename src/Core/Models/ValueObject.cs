@@ -42,18 +42,5 @@ namespace PingDong.CleanArchitect.Core
         {
             return MemberwiseClone() as ValueObject;
         }
-
-        public static bool operator ==(ValueObject left, ValueObject right)
-        {
-            if (ReferenceEquals(left, null))
-                return ReferenceEquals(right, null);
-
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(ValueObject left, ValueObject right)
-        {
-            return !(left == right);
-        }
     }
 }

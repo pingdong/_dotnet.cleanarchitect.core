@@ -103,8 +103,6 @@ namespace PingDong.CleanArchitect.Core.UnitTests
             ta.Save(1);
 
             Assert.True(t.Equals(ta));
-            Assert.True(t == ta);
-            Assert.False(t != ta);
         }
 
         [Fact]
@@ -117,8 +115,6 @@ namespace PingDong.CleanArchitect.Core.UnitTests
             ta.Save(2);
 
             Assert.False(t.Equals(ta));
-            Assert.True(t != ta);
-            Assert.False(t == ta);
         }
 
         [Fact]
