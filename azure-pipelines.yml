@@ -81,7 +81,7 @@ stages:
             
     - task: PublishBuildArtifacts@1
       inputs:
-        pathToPublish: '$(Build.ArtifactStagingDirectory)'
+        pathToPublish: '$(Agent.BuildDirectory)'
         artifactName: drop
 
     # Coverage Report
