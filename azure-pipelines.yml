@@ -206,67 +206,72 @@ stages:
       displayName: Publishing
       artifact: $(local.artifact)
 
-- deployment:
-  displayName: Prerelease
+- stage: Deploy
+  displayName: Deploy
   dependsOn: Publish
-  condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
-  pool:
-    vmImage: $(build.pool)
-  workspace:
-    clean: all
-  variables:
-  - group: Build.NuGet
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-        - checkout: none
+  condition: succeeded()
+  jobs:
+  - deployment:
+    displayName: Prerelease
+    dependsOn: Publish
+    condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+    pool:
+      vmImage: $(build.pool)
+    workspace:
+      clean: all
+    variables:
+    - group: Build.NuGet
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: none
 
-        - download: current
-          displayName: Download artifacts
-          artifact: $(local.artifact)
+          - download: current
+            displayName: Download artifacts
+            artifact: $(local.artifact)
 
-        - task: NuGetCommand@2
-          displayName: 'Pushing to Feed: $(nuget.artifact.feed.prerelease)'
-          inputs:
-            command: push
-            packagesToPush: '$(Agent.BuildDirectory)/$(local.artifact)/*.nupkg'
-            nuGetFeedType: internal
-            publishVstsFeed: $(nuget.artifact.feed.prerelease)
+          - task: NuGetCommand@2
+            displayName: 'Pushing to Feed: $(nuget.artifact.feed.prerelease)'
+            inputs:
+              command: push
+              packagesToPush: '$(Agent.BuildDirectory)/$(local.artifact)/*.nupkg'
+              nuGetFeedType: internal
+              publishVstsFeed: $(nuget.artifact.feed.prerelease)
 
-- deployment:
-  displayName: Release
-  environment: NuGet-Repo
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
-  dependsOn: Publish
-  pool:
-    vmImage: $(build.pool)
-  workspace:
-    clean: all
-  variables:
-  - group: Build.NuGet
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-        - checkout: none
+  - deployment:
+    displayName: Release
+    environment: NuGet-Repo
+    dependsOn: Publish
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    pool:
+      vmImage: $(build.pool)
+    workspace:
+      clean: all
+    variables:
+    - group: Build.NuGet
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: none
 
-        - download: current
-          displayName: Download artifacts
-          artifact: $(local.artifact)
+          - download: current
+            displayName: Download artifacts
+            artifact: $(local.artifact)
 
-        - task: NuGetCommand@2
-          displayName: 'Pushing to Feed: $(nuget.artifact.feed.production)'
-          inputs:
-            command: push
-            packagesToPush: '$(Agent.BuildDirectory)/$(local.artifact)/*.nupkg'
-            nuGetFeedType: internal
-            publishVstsFeed: $(nuget.artifact.feed.production)
-            allowPackageConflicts: true
+          - task: NuGetCommand@2
+            displayName: 'Pushing to Feed: $(nuget.artifact.feed.production)'
+            inputs:
+              command: push
+              packagesToPush: '$(Agent.BuildDirectory)/$(local.artifact)/*.nupkg'
+              nuGetFeedType: internal
+              publishVstsFeed: $(nuget.artifact.feed.production)
+              allowPackageConflicts: true
 
-        - task: DotNetCoreCLI@2
-          displayName: Pushing to NuGet.org
-          inputs:
-            command: custom
-            custom: nuget
-            arguments: 'push $(Agent.BuildDirectory)/$(local.artifact)/*.nupkg --source $(nuget.org.source) --api-key $(nuget.org.apiKey) --skip-duplicate'
+          - task: DotNetCoreCLI@2
+            displayName: Pushing to NuGet.org
+            inputs:
+              command: custom
+              custom: nuget
+              arguments: 'push $(Agent.BuildDirectory)/$(local.artifact)/*.nupkg --source $(nuget.org.source) --api-key $(nuget.org.apiKey) --skip-duplicate'
