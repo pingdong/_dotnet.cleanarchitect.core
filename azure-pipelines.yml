@@ -154,7 +154,7 @@ stages:
   condition: succeeded()
   jobs:
   - job: Prerelease
-    displayName: Prerelease Packaging
+    displayName: Prerelease
     condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
     pool:
       vmImage: $(build.pool)
@@ -167,7 +167,7 @@ stages:
       displayName: Creating Prerelease Package
       inputs:
         command: pack
-        buildProperties: $(nuget.prerelease.suffix)
+        buildProperties: $(nuget.pack.properties)
         packDirectory: '$(Build.ArtifactStagingDirectory)/$(local.artifact)'
         arguments: '--configuration $(build.configuration.release)'
 
@@ -176,7 +176,7 @@ stages:
       artifact: $(local.artifact)
 
   - job: Release
-    displayName: Release Packaging
+    displayName: Release
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
     pool:
       vmImage: $(build.pool)
@@ -189,7 +189,6 @@ stages:
       displayName: Create Release Package
       inputs:
         command: pack
-        packagesToPack: '**/$(local.projectName).csproj'
         packDirectory: '$(Build.ArtifactStagingDirectory)/$(local.artifact)'
         arguments: '--configuration $(build.configuration.release)' 
 
