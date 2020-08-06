@@ -168,7 +168,6 @@ stages:
       inputs:
         command: pack
         buildProperties: $(nuget.prerelease.suffix)
-        packagesToPack: '**/*.csproj'
         packDirectory: '$(Build.ArtifactStagingDirectory)/$(local.artifact)'
         arguments: '--configuration $(build.configuration.release)'
 
