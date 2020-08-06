@@ -9,7 +9,7 @@ trigger:
 variables:
 - group : Build
 - name  : local.projectName
-  value : 'cleanarchitect.core'
+  value : 'CleanArchitect.Core'
 - name  : local.artifact
   value : 'packages'
 
