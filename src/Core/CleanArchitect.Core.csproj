@@ -7,7 +7,7 @@
 
   <!-- Build -->
   <PropertyGroup>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants />
@@ -22,13 +22,13 @@
   <!-- Package -->
   <PropertyGroup>
     <PackageId>PingDong.CleanArchitect.Core</PackageId>
-    <Description>Providing clean architect facilities</Description>
+    <Description>Providing common libraries of clean architect pattern</Description>
     <Version>0.0.3.0</Version>
     <Authors>Ping Dong</Authors>
     <Copyright>Copyright (c) 2020 Ping Dong</Copyright>
     <RepositoryUrl>https://github.com/pingdong/pingdong.cleanarchitect.core</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>dotnet library</PackageTags>
+    <PackageTags>dotnet</PackageTags>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/pingdong/pingdong.cleanarchitect.core</PackageProjectUrl>
