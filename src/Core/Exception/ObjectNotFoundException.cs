@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace PingDong.CleanArchitect.Core
 {
     /// <summary>
     /// Exception type for domain exceptions
     /// </summary>
+    [Serializable]
     public class ObjectNotFoundException : DomainException
     {
         public ObjectNotFoundException(string target, string id, ITracing tracker)
@@ -12,6 +14,11 @@ namespace PingDong.CleanArchitect.Core
         {
             Id = id;
             Target = target;
+        }
+
+        protected ObjectNotFoundException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
         }
 
         public string Id { get; }

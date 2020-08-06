@@ -88,12 +88,7 @@ namespace PingDong.CleanArchitect.Core
 
         public static bool operator == (Entity<T> left, Entity<T> right)
         {
-            //if (Equals(left, null))
-            //    return Equals(right, null);
-            
-            //return left.Equals(right);
-            
-            return left?.Equals(right) ?? Equals(right, null);
+            return Equals(left, null) ? Equals(right, null) : left.Equals(right);
         }
 
         public static bool operator != (Entity<T> left, Entity<T> right)
