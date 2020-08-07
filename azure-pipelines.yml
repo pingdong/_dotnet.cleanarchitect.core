@@ -5,9 +5,6 @@ resources:
     name: pingdong/azure.devops.templates
     ref: refs/heads/master
     endpoint: GitHub
-    trigger:
-      branches:
-        include: '*'
 
 extends:
   template: pipelines/nuget.yml@templates
