@@ -6,9 +6,10 @@ resources:
     ref: refs/heads/master
     endpoint: GitHub
     trigger:
-    - '*'
+      branches:
+        include: '*'
 
 extends:
-  template: pipeline/nuget.yml@templates
+  template: pipelines/nuget.yml@templates
   parameters:
     parameter.projectName: 'dotnet.cleanarchitect.Core'
