@@ -1,0 +1,258 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+parameters:
+- name: parameter.projectName
+  type: string
+
+trigger:
+- '*'
+
+variables:
+- group : Build
+- name  : local.artifact
+  value : 'packages'
+
+stages:
+- stage: QualityControl
+  displayName: Quality Control
+  jobs:
+  - job: Testing
+    displayName: Testing
+    pool:
+      vmImage: $(build.pool)
+    workspace:
+      clean: all 
+    variables:
+    - group : Build.UnitTest
+    - name  : local.codecoveragehistory.directory
+      value : '$(Build.ArtifactStagingDirectory)/history'
+    - name  : local.codecoveragehistory.directory
+      value : ${{ lower(parameters['parameter.projectName']) }}.$(Build.SourceBranchName)
+    - name  : 'disable.coverage.autogenerate'
+      value : 'true'
+    steps:
+    # Preparing
+    - task: SonarSource.sonarcloud.14d9cde6-c1da-4d55-aa01-2965cd301255.SonarCloudPrepare@1
+      displayName: Preparing SonarCloud Analysis
+      condition: |
+        or 
+        (
+          eq(variables['Build.SourceBranch'], 'refs/heads/master'),
+          eq(variables['Build.Reason'], 'PullRequest')
+        )
+      inputs:
+        SonarCloud: SonarCloud
+        organization: $(unit_test.sonarcloud.organization)
+        projectKey: ${{ lower(parameters['parameter.projectName']) }}
+        projectName: ${{ lower(parameters['parameter.projectName']) }}
+        extraProperties: |
+          sonar.coverage.exclusions=**/*[Uu]nit[Tt]ests*/**/*
+          sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
+
+    - task: UniversalPackages@0
+      displayName: Getting Test Coverage History
+      condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      continueOnError: true
+      inputs:
+        command: download
+        downloadDirectory: $(local.codecoveragehistory.directory)
+        feedsToUse: internal
+        vstsFeed: $(unit_test.coverage.history.feed)
+        vstsFeedPackage: $(local.codecoveragehistory.directory)
+        vstsPackageVersion: '0.*'
+
+    # Building
+    - task: DotNetCoreCLI@2
+      displayName: Building
+      inputs:
+        projects: '**/*.sln'    # The <ProjectGuid> element is not required if you build a solution (sln) containing that project.
+                                # for SonarQube
+        arguments: '--configuration $(build.configuration.release)'
+
+    # Testing
+    - task: DotNetCoreCLI@2
+      displayName: Running Unit Tests
+      inputs:
+        command: test
+        arguments: '--no-build --configuration $(build.configuration.release) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover'
+        publishTestResults: true
+        projects: '**/*.[Uu]nit[Tt]ests/*.csproj'
+
+    # Coverage Report
+    - task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@4
+      displayName: Generating Test Coverage Report
+      condition: ne(variables['Build.Reason'], 'PullRequest')
+      inputs:
+        reports: '$(Build.SourcesDirectory)/**/coverage.opencover.xml'
+        targetdir: $(Build.SourcesDirectory)/Coverage
+        reporttypes: Html;HtmlInline_AzurePipelines_Dark;Cobertura;Badges
+        historydir: $(local.codecoveragehistory.directory)
+
+    - task: UniversalPackages@0
+      displayName: Persisting Test Coverage History
+      condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      inputs:
+        command: publish
+        publishDirectory: $(local.codecoveragehistory.directory)
+        feedsToUsePublish: internal
+        vstsFeedPublish: $(unit_test.coverage.history.feed)
+        vstsFeedPackagePublish: $(local.codecoveragehistory.directory)
+        versionOption: patch
+        packagePublishDescription: Code Coverage History for repository $(Build.Repository.Name) on branch $(Build.SourceBranchName)
+        verbosity: Information
+
+    - task: PublishCodeCoverageResults@1
+      displayName: Publishing Test Coverage Report
+      condition: ne(variables['Build.Reason'], 'PullRequest')
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: $(Build.SourcesDirectory)/Coverage/Cobertura.xml
+        reportDirectory: $(Build.SourcesDirectory)/Coverage
+
+    # Code Analysis
+    - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
+      displayName: Run Code Analysis
+      condition: |
+        or 
+        (
+          eq(variables['Build.SourceBranch'], 'refs/heads/master'),
+          eq(variables['Build.Reason'], 'PullRequest')
+        )
+
+    - task: SonarSource.sonarcloud.38b27399-a642-40af-bb7d-9971f69712e8.SonarCloudPublish@1
+      displayName: Publish Quality Gate Result
+      condition: |
+        or 
+        (
+          eq(variables['Build.SourceBranch'], 'refs/heads/master'),
+          eq(variables['Build.Reason'], 'PullRequest')
+        )
+
+    - task: WhiteSource Bolt@20
+      displayName: 'Run WhiteSource Bolt' 
+      condition: |
+        or 
+        (
+          eq(variables['Build.SourceBranch'], 'refs/heads/master'),
+          eq(variables['Build.Reason'], 'PullRequest')
+        )
+
+- stage: Package
+  displayName: Packaging
+  dependsOn: QualityControl
+  condition: succeeded()
+  jobs:
+  - job: Prerelease
+    displayName: Prerelease
+    condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+    pool:
+      vmImage: $(build.pool)
+    workspace:
+      clean: all
+    variables:
+    - group: Build.NuGet
+    steps:      
+    - task: DotNetCoreCLI@2
+      displayName: Creating Prerelease Package
+      inputs:
+        command: pack
+        buildProperties: $(nuget.pack.properties)
+        packDirectory: '$(Build.ArtifactStagingDirectory)/$(local.artifact)'
+        arguments: '--configuration $(build.configuration.release)'
+
+    - publish: $(Build.ArtifactStagingDirectory)/$(local.artifact)
+      displayName: Publishing
+      artifact: $(local.artifact)
+
+  - job: Release
+    displayName: Release
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    pool:
+      vmImage: $(build.pool)
+    workspace:
+      clean: all
+    variables:
+    - group: Build.NuGet
+    steps:      
+    - task: DotNetCoreCLI@2
+      displayName: Create Release Package
+      inputs:
+        command: pack
+        packDirectory: '$(Build.ArtifactStagingDirectory)/$(local.artifact)'
+        arguments: '--configuration $(build.configuration.release)' 
+
+    - publish: $(Build.ArtifactStagingDirectory)/$(local.artifact)
+      displayName: Publishing
+      artifact: $(local.artifact)
+
+- stage: Publish
+  displayName: Publish
+  dependsOn: Package
+  condition: succeeded()
+  jobs:
+  - deployment:
+    displayName: Prerelease
+    environment: NuGet-Prerelease
+    condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+    pool:
+      vmImage: $(build.pool)
+    workspace:
+      clean: all
+    variables:
+    - group: Build.NuGet
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: none
+
+          - download: current
+            displayName: Download artifacts
+            artifact: $(local.artifact)
+
+          - task: NuGetCommand@2
+            displayName: 'Pushing to Feed: $(nuget.artifact.feed.prerelease)'
+            inputs:
+              command: push
+              packagesToPush: '$(Agent.BuildDirectory)/$(local.artifact)/*.nupkg'
+              nuGetFeedType: internal
+              publishVstsFeed: $(nuget.artifact.feed.prerelease)
+
+  - deployment:
+    displayName: Release
+    environment: NuGet
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    pool:
+      vmImage: $(build.pool)
+    workspace:
+      clean: all
+    variables:
+    - group: Build.NuGet
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: none
+
+          - download: current
+            displayName: Download artifacts
+            artifact: $(local.artifact)
+
+          - task: NuGetCommand@2
+            displayName: 'Pushing to Feed: $(nuget.artifact.feed.production)'
+            inputs:
+              command: push
+              packagesToPush: '$(Agent.BuildDirectory)/$(local.artifact)/*.nupkg'
+              nuGetFeedType: internal
+              publishVstsFeed: $(nuget.artifact.feed.production)
+              allowPackageConflicts: true
+
+          - task: DotNetCoreCLI@2
+            displayName: Pushing to NuGet.org
+            inputs:
+              command: custom
+              custom: nuget
+              arguments: 'push $(Agent.BuildDirectory)/$(local.artifact)/*.nupkg --source $(nuget.org.source) --api-key $(nuget.org.apiKey) --skip-duplicate'
