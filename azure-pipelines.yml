@@ -9,4 +9,4 @@ resources:
 extends:
   template: pipelines/nuget.yml@templates
   parameters:
-    parameter.projectName: $['Build.DefinitionName']
+    parameter.projectName: variables['Build.DefinitionName']
