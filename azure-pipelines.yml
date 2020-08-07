@@ -1,12 +1,14 @@
-#resources:
-#  repositories:
-#  - repository: templates
-#    type: git
-#    name: MyProject/MyTemplates
-#    ref: refs/tags/v1
+resources:
+  repositories:
+  - repository: templates
+    type: github
+    name: pingdong/azure.devops.templates
+    ref: refs/heads/master
+    endpoint: GitHub
+    trigger:
+    - '*'
 
 extends:
-  #template: template.yml@templates
-  template: nuget.build.yml
+  template: pipeline/nuget.yml@templates
   parameters:
     parameter.projectName: 'dotnet.cleanarchitect.Core'
