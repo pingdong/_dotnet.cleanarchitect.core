@@ -8,3 +8,4 @@ resources:
 
 extends:
   template: pipelines/nuget.yml@templates
+
