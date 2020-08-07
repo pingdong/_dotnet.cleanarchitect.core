@@ -10,4 +10,3 @@ extends:
   template: pipelines/nuget.yml@templates
   parameters:
     projectName: ${{ variables['Build.DefinitionName'] }}
-
